@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="201.39" height="171.681" viewBox="0 0 201.39 171.681">
+  <g id="Group_4302" data-name="Group 4302" transform="translate(-862.815 -382.809)">
+    <g id="Layer_54" data-name="Layer 54" transform="translate(865.816 385.81)">
+      <path id="Path_1536" data-name="Path 1536" d="M98.455,168.97a19.545,19.545,0,0,1-13.877-5.733L17.472,96.132A56.811,56.811,0,0,1,1.054,55.413,52.511,52.511,0,0,1,54.087,3.292,52.511,52.511,0,0,1,91.94,18.863l6.515,6.515,5.342-5.342h0a54.661,54.661,0,0,1,71.666-5.8,53.749,53.749,0,0,1,5.277,80.526l-68.408,68.473A19.545,19.545,0,0,1,98.455,168.97Z" transform="translate(-1.049 -3.29)" fill="none" stroke="#ff4b57" stroke-width="6"/>
+    </g>
+    <g id="Group_4209" data-name="Group 4209" transform="translate(636.134 -399.398) rotate(45)">
+      <line id="Line_584" data-name="Line 584" x2="20" transform="translate(782.5 386.81)" fill="none" stroke="#ff4b57" stroke-linecap="round" stroke-width="3"/>
+      <line id="Line_585" data-name="Line 585" y2="20.619" transform="translate(792.5 376.5)" fill="none" stroke="#ff4b57" stroke-linecap="round" stroke-width="3"/>
+    </g>
+    <g id="Group_4210" data-name="Group 4210" transform="translate(722.134 -399.398) rotate(45)">
+      <line id="Line_584-2" data-name="Line 584" x2="20" transform="translate(782.5 386.81)" fill="none" stroke="#ff4b57" stroke-linecap="round" stroke-width="3"/>
+      <line id="Line_585-2" data-name="Line 585" y2="20.619" transform="translate(792.5 376.5)" fill="none" stroke="#ff4b57" stroke-linecap="round" stroke-width="3"/>
+    </g>
+    <path id="Path_3727" data-name="Path 3727" d="M1027.821,3359.051l-10.653,9.014-10.653-9.014-10.653,9.014-10.653-9.014-10.653,9.014-9.014-9.014" transform="translate(-33.182 -2875.83)" fill="none" stroke="#ff4b57" stroke-linecap="round" stroke-linejoin="round" stroke-width="6"/>
+  </g>
+</svg>

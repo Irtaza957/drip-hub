@@ -1,0 +1,61 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  input {
+    @apply focus:outline-0 focus:outline-none focus:ring-0 focus-visible:outline-0 focus-visible:outline-none focus-visible:ring-0;
+  }
+
+  select {
+    @apply focus:outline-0 focus:outline-none focus:ring-0 focus-visible:outline-0 focus-visible:outline-none focus-visible:ring-0;
+  }
+
+  button {
+    @apply focus:outline-0 focus:outline-none focus:ring-0 focus-visible:outline-0 focus-visible:outline-none focus-visible:ring-0;
+  }
+
+  a {
+    @apply focus:outline-0 focus:outline-none focus:ring-0 focus-visible:outline-0 focus-visible:outline-none focus-visible:ring-0;
+  }
+
+  textarea {
+    @apply focus:outline-0 focus:outline-none focus:ring-0 focus-visible:outline-0 focus-visible:outline-none focus-visible:ring-0;
+  }
+}
+
+::-webkit-scrollbar {
+  display: none;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  scroll-behavior: smooth;
+}
+
+body {
+  color: white;
+}
+
+.rdp-day_selected,
+.rdp-caption {
+  background-color: #ff4b57 !important;
+}
+
+.rdp-button:focus-visible:not([disabled]) {
+  color: white !important;
+  background-color: transparent !important;
+  border: none !important;
+}
+
+.rdp-button:hover:not([disabled]):not(.rdp-day_selected) {
+  background-color: transparent !important;
+}
+
+.PhoneInput > input {
+  background-color: transparent !important;
+  display: flex;
+  z-index: 0 !important;
+}
