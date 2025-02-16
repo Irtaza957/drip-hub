@@ -296,8 +296,11 @@ const Navbar = () => {
             <button type="button" onClick={() => setOpenSearch(true)}>
               <MagnifierIcon className="size-5 text-light-text dark:text-white" />
             </button>
-            <Link href="/cart" type="button">
+            <Link href="/cart" type="button" className="relative">
               <CartTwoIcon className="size-5 text-light-text dark:text-white" />
+              <div className="absolute -top-2 -right-2 size-4 flex items-center justify-center bg-accent rounded-full">
+                  <span className="text-xs text-white">{cart?.length}</span>
+                </div>
             </Link>
             <button type="button" onClick={() => setOpenMenu(true)}>
               <MenuIcon className="size-5 text-light-text dark:text-white" />

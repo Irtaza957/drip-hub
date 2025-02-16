@@ -118,8 +118,10 @@ const RegisterModal = ({
   };
 
   useEffect(() => {
-    fetchCountries(setCountryList);
-  }, []);
+    if(open) {
+      fetchCountries(setCountryList);
+    }
+  }, [open]);
 
   return (
     <>

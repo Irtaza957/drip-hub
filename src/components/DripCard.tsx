@@ -156,8 +156,8 @@ const DripCard = ({
         )}
         <div className="col-span-4 w-full pl-3 flex flex-col items-start text-light-text dark:text-white">
           <div className="w-full flex items-start justify-between">
-            <div className="flex flex-col items-center justify-center">
-              <div className="w-full flex items-center sm:items-end justify-center">
+            <div className="w-full flex flex-col items-center justify-center px-1.5 py-1">
+              <div className="w-full flex items-end justify-center">
                 <Link
                   href={`/drips/${item.service_id}`}
                   className="flex-1 text-[16px] sm:text-[22px] text-left font-normal"

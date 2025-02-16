@@ -218,12 +218,12 @@ const DripDetails = ({ data }: { data: DRIP_DETAIL_RESPONSE }) => {
               </div>
             ))}
           </div>
-          <div className="w-full flex flex-col items-center justify-center space-y-2">
+          {data.description && <div className="w-full flex flex-col items-center justify-center space-y-2">
             <h1 className="text-left text-[20px] w-full">Description</h1>
             <p className="w-full text-left font-light mt-2 mb-5 text-[14px]">
               {data.description}
             </p>
-          </div>
+          </div>}
           {data.sections.map((section, idx) => (
             <div
               key={idx}
@@ -392,12 +392,12 @@ const DripDetails = ({ data }: { data: DRIP_DETAIL_RESPONSE }) => {
           </div>
           <div className="w-full grid grid-cols-2 gap-7 lg:gap-12 xl:gap-0 text-light-text dark:text-white">
             <div className="col-span-1 w-full flex flex-col items-center justify-center gap-5">
-              <div className="w-full flex flex-col items-center justify-center space-y-2">
+            {data.description && <div className="w-full flex flex-col items-center justify-center space-y-2">
                 <h1 className="text-left text-xl w-full">Description</h1>
                 <p className="w-full text-sm text-left font-light mt-2 mb-5">
                   {data.description}
                 </p>
-              </div>
+              </div>}
               {data.sections.length !== 0 && (
                 <div className="w-full flex flex-col items-center justify-center space-y-2 mt-5">
                   <h1 className="text-left text-xl w-full">
