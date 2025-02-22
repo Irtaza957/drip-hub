@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import ArrowRightIcon from "@/assets/icons/ArrowRightIcon";
 import { useTheme } from "next-themes";
+import he from "he";
 
 const ListTitle = ({
   cn,
@@ -34,9 +35,10 @@ const ListTitle = ({
           </h1>
         </div>
       ) : (
-        <h1 className="text-left text-xl xl:text-2xl text-light-text dark:text-white">
-          {title}
-        </h1>
+        <h1
+          dangerouslySetInnerHTML={{ __html:  he.decode(title) }}
+          className="text-left text-xl xl:text-2xl text-light-text dark:text-white"
+        />
       )}
       {!title.includes("Related") && (
         <Link href={`/sections/${title.toLowerCase().split(" ").join("-")}`}>

@@ -46,12 +46,12 @@ const DripList = ({
             }
           }}
         >
-          {[...data, ...data].map((item, idx) => (
+          {[...data].map((item, idx) => (
             <SwiperSlide
               key={item.category_id}
               className={`${
                 startSlide &&
-                (idx === 0 || idx === 4 || [...data, ...data].length === 4)
+                (idx === 0 || idx === 4 || [...data].length === 4)
                   ? "pl-5"
                   : ""
               }`}

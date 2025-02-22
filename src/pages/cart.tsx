@@ -165,7 +165,7 @@ const Cart = () => {
                         <FaPlus className="w-4 h-4" />
                       </button>
                     </div>
-                    <p className="text-xl">AED {item.price}</p>
+                    <p className="text-xl">AED {Math.round(item.price_with_vat || item.price)}</p>
                   </div>
                 </div>
               ))}
@@ -199,6 +199,20 @@ const Cart = () => {
                 </button>
               </div>
               <div className="w-full h-full flex flex-col items-start justify-start gap-2.5">
+                <div className="w-full flex items-center justify-between">
+                  <p>Price Without VAT</p>
+                  <p>
+                    AED&nbsp;
+                    {cart.reduce((acc: number, item: CART) => acc + (Number(item.price) || 0), 0)}
+                  </p>
+                </div>
+                <div className="w-full flex items-center justify-between">
+                  <p>Price With VAT</p>
+                  <p>
+                    AED&nbsp;
+                    {cart.reduce((acc: number, item: CART) => acc + (Number(item.price_with_vat) || 0), 0)}
+                  </p>
+                </div>
                 <div className="w-full flex items-center justify-between">
                   <p>Subtotal</p>
                   <p>

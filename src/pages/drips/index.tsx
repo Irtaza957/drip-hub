@@ -446,13 +446,14 @@ const DripListing = () => {
                       : "bg-white dark:bg-highlight text-light-text dark:text-white"
                   }`}
                 >
+                  {sub.icon &&
                   <Image
-                    src={sub.icon}
+                    src={sub.icon || ''}
                     alt="sub-icon"
                     width={50}
                     height={50}
                     className="size-7"
-                  />
+                  />}
                   <p className="w-full text-left text-xs lg:text-sm font-medium">
                     {sub.name}
                   </p>

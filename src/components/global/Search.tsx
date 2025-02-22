@@ -23,12 +23,7 @@ type ITEM = {
 
 const Search = () => {
   const menuRef = useRef(null);
-  const { data } = useFetchCategoriesQuery({});
   const [category, setCategory] = useState<number>(60);
-  useOnClickOutside(menuRef, () => {
-    setShowMenu(false);
-    setCategory(parseInt(data?.[0].category_id!));
-  });
   const [list, setList] = useState<ITEM[] | null>(null);
   const [showMenu, setShowMenu] = useState<boolean>(false);
   const [selectedSub, setSelectedSub] = useState<string>("7");
@@ -36,12 +31,19 @@ const Search = () => {
   const [subCategories, setSubCategories] = useState<SERVICE_LIST[] | null>(
     null
   );
+  const { data } = useFetchCategoriesQuery(undefined, { skip: !showMenu, refetchOnMountOrArgChange: true });
+  useOnClickOutside(menuRef, () => {
+    setShowMenu(false);
+    setCategory(parseInt(data?.[0].category_id!));
+  });
 
   const getSubs = async () => {
-    const response = await getSubCategories(category);
-    const data = response.data ?? [];
+    if(category){
+      const response = await getSubCategories(category);
+      const data = response.data ?? [];
 
-    setSubCategories(data);
+      setSubCategories(data);
+    }
   };
 
   useEffect(() => {
@@ -61,8 +63,10 @@ const Search = () => {
 
   useEffect(() => {
     setSelectedSub("0");
-    getSubs();
-  }, [category]);
+    if(showMenu){
+      getSubs();
+    }
+  }, [category, showMenu]);
 
   useEffect(() => {
     if (subCategories) {

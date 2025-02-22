@@ -213,7 +213,7 @@ const DripCard = ({
           </Link>
           <div className="w-full flex items-end sm:items-center justify-between mt-2">
             <span className="text-[16px] sm:text-[22px] font-normal">
-              AED {item.price_with_vat}
+              AED {item.price_without_vat}
             </span>
             {quantity === 0 ? (
               <>

@@ -20,7 +20,7 @@ type CountryResponse = {
 export const calculateTotalCost = (cart: CART[]) => {
   let totalCost = 0;
   for (const item of cart) {
-    totalCost += item.price * item.quantity;
+    totalCost += (item.price_with_vat || item.price) * item.quantity;
   }
   return totalCost;
 };

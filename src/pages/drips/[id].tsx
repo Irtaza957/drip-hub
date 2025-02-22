@@ -5,7 +5,7 @@ import toast from "react-hot-toast";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { RiShareLine } from "react-icons/ri";
-import { FaMinus, FaPlus } from "react-icons/fa6";
+import { FaMinus, FaPlus, FaStar } from "react-icons/fa6";
 import { useDispatch, useSelector } from "react-redux";
 
 import { RootState } from "@/store";
@@ -21,30 +21,14 @@ import CartTwoIcon from "@/assets/icons/CartTwoIcon";
 import AuthModal from "@/components/modals/AuthModal";
 import { useAddToWishlistMutation } from "@/store/services/wishlist";
 import { addToCart, removeFromCart, toggleSidebar } from "@/store/global";
-
-const bundles = [
-  {
-    id: 1,
-    name: "Bundle of 3",
-  },
-  {
-    id: 2,
-    name: "Bundle of 6",
-  },
-  {
-    id: 3,
-    name: "Bundle of 9",
-  },
-  {
-    id: 4,
-    name: "Bundle of 12",
-  },
-];
+import he from "he";
+import dayjs from "dayjs";
+import Accordion from "@/components/Accordion";
 
 const DripDetails = ({ data }: { data: DRIP_DETAIL_RESPONSE }) => {
   const router = useRouter();
   const dispatch = useDispatch();
-  const [bundle, setBundle] = useState(1);
+  const [bundle, setBundle] = useState(0);
   const [quantity, setQuantity] = useState(0);
   const [compare, setCompare] = useState(false);
   const [wishlist, setWishlist] = useState(false);
@@ -52,6 +36,7 @@ const DripDetails = ({ data }: { data: DRIP_DETAIL_RESPONSE }) => {
   const [addToWishlist] = useAddToWishlistMutation();
   const [list, setList] = useState<Set<string>>(new Set<string>());
   const { user, cart } = useSelector((state: RootState) => state.global);
+  const [tab, setTab] = useState<string>(data?.sections[0]?.name);
 
   const addToList = (item: string) => {
     if (list.has(item)) {
@@ -85,7 +70,8 @@ const DripDetails = ({ data }: { data: DRIP_DETAIL_RESPONSE }) => {
         addToCart({
           id: parseInt(data.service_id),
           name: data.service_name,
-          price: data.price,
+          price: data?.bundles[bundle]?.price_without_vat || data.price,
+          price_with_vat: data?.bundles[bundle]?.price_with_vat,
           discount: data.discount_value,
           quantity: 1,
         })
@@ -123,9 +109,9 @@ const DripDetails = ({ data }: { data: DRIP_DETAIL_RESPONSE }) => {
     }
   };
 
-  const formattedText = (text: string) => {
-    return text.replace(/&lt;/g, "<").replace(/&gt;/g, ">");
-  };
+  // const formattedText = (text: string) => {
+  //   return text.replace(/&lt;/g, "<").replace(/&gt;/g, ">");
+  // };
 
   useEffect(() => {
     if (data.service_id !== undefined) {
@@ -203,22 +189,22 @@ const DripDetails = ({ data }: { data: DRIP_DETAIL_RESPONSE }) => {
             </button>
           </div>
           <div className="w-full grid grid-cols-2 gap-5 my-5">
-            {bundles.map((b) => (
+            {data?.bundles.map((b, index) => (
               <div
-                key={b.id}
-                onClick={() => setBundle(b.id)}
+                key={index}
+                onClick={() => setBundle(index)}
                 className="col-span-1 w-full flex items-center justify-start space-x-3 cursor-pointer"
               >
                 <div className="w-6 h-6 p-1 border border-accent">
                   <div
-                    className={`w-full h-full ${bundle == b.id && "bg-accent"}`}
+                    className={`w-full h-full ${bundle == index && "bg-accent"}`}
                   />
                 </div>
-                <span>{b.name}</span>
+                <span>{b.bundle}</span>
               </div>
             ))}
           </div>
-          {data.description && <div className="w-full flex flex-col items-center justify-center space-y-2">
+          {/* {data.description && <div className="w-full flex flex-col items-center justify-center space-y-2">
             <h1 className="text-left text-[20px] w-full">Description</h1>
             <p className="w-full text-left font-light mt-2 mb-5 text-[14px]">
               {data.description}
@@ -234,7 +220,7 @@ const DripDetails = ({ data }: { data: DRIP_DETAIL_RESPONSE }) => {
                 {section.description}
               </p>
             </div>
-          ))}
+          ))} */}
         </div>
         <div className="fixed z-30 bottom-0 left-0 w-full p-5 flex items-center justify-center bg-light-primary dark:bg-primary">
           {quantity === 0 ? (
@@ -242,7 +228,7 @@ const DripDetails = ({ data }: { data: DRIP_DETAIL_RESPONSE }) => {
               onClick={() => handleIncrement()}
               className="w-full h-12 py-2 px-12 flex items-center justify-between bg-accent text-white"
             >
-              <span className="text-[20px]">AED {data.price}</span>
+              <span className="text-[20px]">AED {data?.bundles[bundle]?.price_without_vat || data.price}</span>
               <span className="text-[20px]">Add to Cart</span>
             </button>
           ) : (
@@ -266,131 +252,127 @@ const DripDetails = ({ data }: { data: DRIP_DETAIL_RESPONSE }) => {
           )}
         </div>
       </div>
-      <div className="w-full md:w-[90%] lg:max-w-[1440px] mx-auto hidden sm:flex p-5 md:px-0">
-        <div className="w-full flex flex-col items-center justify-center gap-7 lg:gap-12 p-8 mt-[80px] mb-5 bg-white dark:bg-primary">
-          <div className="w-full grid grid-cols-2 gap-8 lg:gap-16 xl:gap-0">
-            <div className="col-span-1 w-full">
-              <Image
-                src={Drips}
-                alt="drip"
-                className="w-full h-full xl:w-[calc(100%-80px)] bg-light-primary dark:bg-secondary p-20"
-              />
-            </div>
-            <div className="col-span-1 w-full flex flex-col items-start justify-between text-light-text dark:text-white">
-              <div className="w-full flex flex-col items-center justify-center gap-2 lg:gap-4">
-                <div className="w-full flex items-center justify-center">
-                  <h1 className="flex-1 text-left text-[36px] !leading-[36px] font-medium w-full">
-                    {data.service_name}
-                  </h1>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      if (user) {
-                        like();
-                      } else {
-                        setOpenLogin(true);
-                      }
-                    }}
-                  >
-                    <HeartIcon
-                      fillColor={wishlist ? "#FF4B57" : "transparent"}
-                      className="size-6 text-accent"
-                    />
-                  </button>
-                </div>
-                <p className="w-full text-left font-light line-clamp-1 lg:line-clamp-4">
-                  {data.description}
-                </p>
+      <div className="md:w-[90%] lg:max-w-[1440px] mx-auto">
+        <div className="w-full hidden sm:flex p-5 md:px-0">
+          <div className="w-full flex flex-col items-center justify-center gap-7 lg:gap-12 p-8 mt-[80px] bg-white dark:bg-primary">
+            <div className="w-full grid grid-cols-2 gap-8 lg:gap-16 xl:gap-0">
+              <div className="col-span-1 w-full">
+                <Image
+                  src={Drips}
+                  alt="drip"
+                  className="w-full h-full xl:w-[calc(100%-80px)] bg-light-primary dark:bg-secondary p-20"
+                />
               </div>
-              <div className="w-full flex flex-col items-center justify-center gap-2 lg:gap-6">
-                <div className="w-full flex items-center justify-start">
-                  <div className="w-full flex items-center justify-start gap-3">
-                    <DropletIcon className="size-4 lg:size-5 text-accent" />
-                    <span className="text-base lg:text-[21px]">250ml</span>
-                  </div>
-                  <div className="w-full flex items-center justify-start gap-3">
-                    <ClockIcon className="size-4 lg:size-5 text-accent" />
-                    <span className="text-base lg:text-[21px]">
-                      {data.duration}
-                    </span>
-                  </div>
-                </div>
-                <div className="w-full flex items-center justify-start">
-                  <p className="text-left text-[#A3A3A3] line-through">
-                    {data.discount_value ? (
-                      <p className="line-through text-gray-500 text-sm lg:text-base mr-10">
-                        AED {data.price}
-                      </p>
-                    ) : (
-                      <p className="line-through text-gray-500 text-sm lg:text-base mr-10">
-                        AED 000
-                      </p>
-                    )}
-                  </p>
-                  <p className="text-left text-lg lg:text-xl">
-                    AED&nbsp;{data.price}
-                  </p>
-                </div>
-                <div className="w-full flex items-center justify-start gap-4">
-                  <div className="w-64 flex items-center justify-start space-x-5">
-                    {quantity === 0 ? (
-                      <button
-                        onClick={() => {
-                          handleIncrement();
-                          handleSidebar();
-                        }}
-                        className="w-full h-[32px] lg:h-[46px] bg-transparent border border-accent font-medium flex items-center justify-center"
-                      >
-                        <CartTwoIcon className="text-accent size-4 lg:size-6" />
-                      </button>
-                    ) : (
-                      <div className="w-full flex items-center justify-between">
-                        <span
-                          onClick={handleDecrement}
-                          className="size-[32px] lg:size-[46px] px-2 text-accent border border-accent hover:bg-accent hover:text-white flex items-center justify-center cursor-pointer"
-                        >
-                          <FaMinus />
-                        </span>
-                        <span className="text-lg font-bold">{quantity}</span>
-                        <span
-                          onClick={handleIncrement}
-                          className="size-[32px] lg:size-[46px] px-2 border border-accent bg-accent text-white flex items-center justify-center cursor-pointer"
-                        >
-                          <FaPlus />
-                        </span>
-                      </div>
-                    )}
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => setCompare(true)}
-                    className="h-[32px] lg:h-[46px] px-6 pb-1 bg-accent border border-accent text-white place-self-end"
-                  >
-                    Compare
-                  </button>
-                </div>
-                <div className="w-full grid grid-cols-2 lg:grid-cols-4 gap-2.5 items-center justify-between !mt-2">
-                  {bundles.map((b) => (
-                    <div
-                      key={b.id}
-                      onClick={() => setBundle(b.id)}
-                      className="col-span-1 w-full flex items-center justify-start space-x-3 cursor-pointer"
+              <div className="col-span-1 w-full flex flex-col items-start justify-between md:mb-28 text-light-text dark:text-white">
+                <div className="w-full flex flex-col items-center justify-center gap-2 lg:gap-4">
+                  <div className="w-full flex items-center justify-center">
+                    <h1 className="flex-1 text-left text-[36px] !leading-[36px] font-medium w-full">
+                      {data.service_name}
+                    </h1>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (user) {
+                          like();
+                        } else {
+                          setOpenLogin(true);
+                        }
+                      }}
                     >
-                      <div className="w-6 h-6 p-1 border border-accent">
-                        <div
-                          className={`w-full h-full ${
-                            bundle === b.id && "bg-accent"
-                          }`}
-                        />
-                      </div>
-                      <span>{b.name}</span>
+                      <HeartIcon
+                        fillColor={wishlist ? "#FF4B57" : "transparent"}
+                        className="size-6 text-accent"
+                      />
+                    </button>
+                  </div>
+                  <p className="w-full text-left font-light line-clamp-1 lg:line-clamp-4">
+                    {data.description}
+                  </p>
+                </div>
+                <div className="w-full flex flex-col items-center justify-center gap-2 lg:gap-6">
+                  <div className="w-full flex items-center justify-start">
+                    <div className="w-full flex items-center justify-start gap-3">
+                      <DropletIcon className="size-4 lg:size-5 text-accent" />
+                      <span className="text-base lg:text-[21px]">250ml</span>
                     </div>
-                  ))}
+                    <div className="w-full flex items-center justify-start gap-3">
+                      <ClockIcon className="size-4 lg:size-5 text-accent" />
+                      <span className="text-base lg:text-[21px]">
+                        {data.duration}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="w-full flex items-center justify-start">
+                    <p className="text-left text-[#A3A3A3] line-through">
+                      {data.discount_value && (
+                        <p className="line-through text-gray-500 text-sm lg:text-base mr-10">
+                          AED {data?.bundles[bundle]?.price_without_vat || data.price}
+                        </p>
+                      )}
+                    </p>
+                    <p className="text-left text-lg lg:text-xl">
+                      AED&nbsp;{data?.bundles[bundle]?.price_without_vat || data.price}
+                    </p>
+                  </div>
+                  <div className="w-full flex items-center justify-start gap-4">
+                    <div className="w-64 flex items-center justify-start space-x-5">
+                      {quantity === 0 ? (
+                        <button
+                          onClick={() => {
+                            handleIncrement();
+                            handleSidebar();
+                          }}
+                          className="w-full h-[32px] lg:h-[46px] bg-transparent border border-accent font-medium flex items-center justify-center"
+                        >
+                          <CartTwoIcon className="text-accent size-4 lg:size-6" />
+                        </button>
+                      ) : (
+                        <div className="w-full flex items-center justify-between">
+                          <span
+                            onClick={handleDecrement}
+                            className="size-[32px] lg:size-[46px] px-2 text-accent border border-accent hover:bg-accent hover:text-white flex items-center justify-center cursor-pointer"
+                          >
+                            <FaMinus />
+                          </span>
+                          <span className="text-lg font-bold">{quantity}</span>
+                          <span
+                            onClick={handleIncrement}
+                            className="size-[32px] lg:size-[46px] px-2 border border-accent bg-accent text-white flex items-center justify-center cursor-pointer"
+                          >
+                            <FaPlus />
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setCompare(true)}
+                      className="h-[32px] lg:h-[46px] px-6 pb-1 bg-accent border border-accent text-white place-self-end"
+                    >
+                      Compare
+                    </button>
+                  </div>
+                  <div className="w-full grid grid-cols-2 lg:grid-cols-4 gap-2.5 items-center justify-between !mt-2">
+                    {data?.bundles.map((b, index) => (
+                      <div
+                        key={index}
+                        onClick={() => setBundle(index)}
+                        className="col-span-1 w-full flex items-center justify-start space-x-3 cursor-pointer"
+                      >
+                        <div className="w-6 h-6 p-1 border border-accent">
+                          <div
+                            className={`w-full h-full ${bundle === index && "bg-accent"
+                              }`}
+                          />
+                        </div>
+                        <span>{b.bundle}</span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-          <div className="w-full grid grid-cols-2 gap-7 lg:gap-12 xl:gap-0 text-light-text dark:text-white">
+            {/* <div className="w-full grid grid-cols-2 gap-7 lg:gap-12 xl:gap-0 text-light-text dark:text-white">
             <div className="col-span-1 w-full flex flex-col items-center justify-center gap-5">
             {data.description && <div className="w-full flex flex-col items-center justify-center space-y-2">
                 <h1 className="text-left text-xl w-full">Description</h1>
@@ -417,6 +399,149 @@ const DripDetails = ({ data }: { data: DRIP_DETAIL_RESPONSE }) => {
                 </div>
               </div>
             )}
+          </div> */}
+          </div>
+        </div>
+        <div className="md:hidden flex flex-col items-center justify-center space-y-3 px-5 mb-8">
+        {data.sections.map((section, idx) => (
+          <Accordion section={section} key={idx} />
+        ))}
+        </div>
+        <div className="w-full hidden md:flex flex-col items-center justify-center pb-8 space-y-5">
+          <div className="w-full flex space-x-2.5 bg-[#F5F5F5] p-4 rounded-lg">
+            {data.description &&
+              <p
+                onClick={() => setTab("Description")}
+                className={`text-center px-9 py-2.5 cursor-pointer rounded-full font-semibold text-xs md:text-sm ${tab === "Description"
+                  ? "bg-primary text-white"
+                  : "bg-[#DDDDDD] text-[#555555]"
+                  }`}
+              >
+                Description
+              </p>}
+            {data.sections.map((section, idx) => (
+              <>
+                <p
+                  key={idx}
+                  onClick={() => setTab(section.name)}
+                  className={`text-center px-9 py-2.5 cursor-pointer rounded-full font-semibold text-xs md:text-sm ${tab === section.name
+                    ? "bg-primary text-white"
+                    : "bg-[#DDDDDD] text-[#555555]"
+                    }`}
+                >
+                  {section.name}
+                </p>
+              </>
+            ))}
+          </div>
+          {(tab === "Description" && data.description) && <p
+            dangerouslySetInnerHTML={{ __html: he.decode(data.description) }}
+            className="w-full text-left text-white font-medium px-4 text-sm"
+          />}
+          {data.sections
+            .filter((section) => section.name === tab)
+            .map((section, idx) => (
+              <p
+                key={idx}
+                dangerouslySetInnerHTML={{ __html: he.decode(section.description) }}
+                className="w-full text-left text-white font-medium px-4 text-sm"
+              />
+            ))}
+        </div>
+        <div className="w-full md:grid grid-cols-2 gap-5 mb-5 border-y border-[#DDDDDD] pt-8 pb-5 px-5">
+          <h1 className="col-span-2 w-full text-left text-xl font-bold mb-4 md:mb-0">
+            Service Ratings & Reviews
+          </h1>
+          <div className="col-span-1 w-full grid grid-cols-2 gap-2.5 divide-x divide-gray-400">
+            <div className="col-span-1 w-full flex flex-col items-center justify-center space-y-2.5">
+              <p className="w-full text-left text-2xl font-bold">
+                {data.rating}
+                <span className="text-white text-lg font-medium">
+                  &nbsp;/ 5.0
+                </span>
+              </p>
+              <div className="w-full flex items-center justify-start gap-1.5">
+                {[...Array(parseInt(data.rating))].map((id, idx) => (
+                  <FaStar key={idx} className="w-6 h-6 text-accent" />
+                ))}
+                {[...Array(5 - parseInt(data.rating))].map((id, idx) => (
+                  <FaStar key={idx} className="w-6 h-6 text-[#DDDDDD]" />
+                ))}
+              </div>
+              <p className="w-full text-left text-2xl font-bold">
+                {data.total_reviews}&nbsp;
+                <span className="text-white text-lg font-medium">
+                  Ratings
+                </span>
+              </p>
+            </div>
+            <div className="col-span-1 w-full flex flex-col pl-2.5">
+              {[...Array(5)].map((_, idx) => (
+                <div key={idx} className="w-full grid grid-cols-12 gap-x-2">
+                  <div className="col-span-1 w-full flex items-center justify-center">
+                    <span className="font-extrabold pt-0.5">{5 - idx}</span>
+                  </div>
+                  <div className="col-span-2 w-full flex items-center justify-center">
+                    <FaStar className="text-amber-500 size-4" />
+                  </div>
+                  <div className="col-span-5 w-full flex items-center justify-center">
+                    <div className="w-full border-[3px] rounded-full border-amber-500" />
+                  </div>
+                  <div className="col-span-4 w-full flex items-center justify-center">
+                    <span className="font-medium">1,432</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="w-full col-span-2 flex flex-col space-y-5">
+            {data.reviews.map((review, idx) => (
+              <div
+                key={idx}
+                className="w-full flex flex-col items-center justify-center space-x-5"
+              >
+                <div className="w-full flex items-center justify-start space-x-6">
+                  <Image
+                    src="https://ui.shadcn.com/avatars/04.png"
+                    alt="user"
+                    width={50}
+                    height={50}
+                    className="rounded-full bg-gray-200"
+                  />
+                  <div className="w-full flex flex-col items-center justify-start space-y-1">
+                    <div className="w-full flex items-center justify-start space-x-10">
+                      <p className="font-bold">{review.customer || 'User'}</p>
+                      <div className="flex items-center justify-center gap-0.5">
+                        {[...Array(parseInt(review.review))].map((id, idx) => (
+                          <FaStar key={idx} className="text-accent" />
+                        ))}
+                        {[...Array(5 - parseInt(review.review))].map(
+                          (id, idx) => (
+                            <FaStar key={idx} className="text-gray-300" />
+                          )
+                        )}
+                      </div>
+                    </div>
+                    <span className="w-full text-left text-xs text-gray-400">
+                      {dayjs(review?.created_at).format("ddd DD MMM, YYYY")}
+                    </span>
+                  </div>
+                </div>
+                <p className="w-full pl-16 text-left text-sm text-[#535763] font-medium pt-3">
+                  {review.description}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div className="w-full flex flex-col items-center space-y-5 px-5 pb-5">
+          <h1 className="col-span-2 w-full text-left text-xl font-bold">
+            FAQs
+          </h1>
+          <div className="w-full flex flex-col items-center justify-center space-y-2.5">
+            {data.faqs.map((section, idx) => (
+              <Accordion section={section} key={idx} />
+            ))}
           </div>
         </div>
       </div>

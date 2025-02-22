@@ -360,6 +360,18 @@ const Checkout = () => {
             </div>
             <div className="w-full flex flex-col items-center justify-center gap-1.5">
               <div className="w-full flex items-center justify-between text-sm md:text-[18px]">
+                <p>Price Without VAT</p>
+                <p>
+                  AED {cart.reduce((acc: number, item: CART) => acc + (Number(item.price) || 0), 0)}
+                </p>
+              </div>
+              <div className="w-full flex items-center justify-between text-sm md:text-[18px]">
+                <p>Price With VAT</p>
+                <p>
+                  AED {cart.reduce((acc: number, item: CART) => acc + (Number(item.price_with_vat) || 0), 0)}
+                </p>
+              </div>
+              <div className="w-full flex items-center justify-between text-sm md:text-[18px]">
                 <p>Subtotal</p>
                 <p>
                   AED {new Intl.NumberFormat().format(calculateTotalCost(cart))}
@@ -367,7 +379,7 @@ const Checkout = () => {
               </div>
               <div className="w-full flex items-center justify-between text-sm md:text-[18px] pb-2.5">
                 <p>VAT</p>
-                <p>AED 0.00</p>
+                <p>AED {cart.reduce((acc: number, item: CART) => acc + (item.discount || 0), 0).toFixed(2)}</p>
               </div>
               <div className="w-full flex items-center justify-between text-lg md:text-xl pt-2.5 border-t border-accent/50">
                 <p>Grand Total</p>

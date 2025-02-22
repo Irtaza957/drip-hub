@@ -146,6 +146,20 @@ const Sidebar = () => {
         {cart.length > 0 && (
           <div className="w-full flex flex-col items-center justify-center pb-[85px] px-5 space-y-1">
             <div className="w-full text-sm flex items-center justify-between font-medium">
+              <span>Price Without VAT</span>
+              <span>
+                AED&nbsp;
+                {cart.reduce((acc: number, item: CART) => acc + (Number(item.price) || 0), 0)}
+              </span>
+            </div>
+            <div className="w-full text-sm flex items-center justify-between font-medium">
+              <span>Price With VAT</span>
+              <span>
+                AED&nbsp;
+                {cart.reduce((acc: number, item: CART) => acc + (Number(item.price_with_vat) || 0), 0)}
+              </span>
+            </div>
+            <div className="w-full text-sm flex items-center justify-between font-medium">
               <span>Sub Total</span>
               <span>
                 AED&nbsp;
@@ -154,7 +168,7 @@ const Sidebar = () => {
             </div>
             <div className="w-full text-sm flex items-center justify-between font-medium">
               <span>Discount</span>
-              <span>AED 0.00</span>
+              <span>AED {cart.reduce((acc: number, item: CART) => acc + (item.discount || 0), 0)?.toFixed(2)}</span>
             </div>
             <div className="w-full text-sm flex items-center justify-between font-bold">
               <span>Grand Total</span>
