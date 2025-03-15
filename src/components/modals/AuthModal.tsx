@@ -79,13 +79,13 @@ const AuthModal = ({ openLogin, setOpenLogin }: AuthModalProps) => {
     }
 
     try {
-      const data = await getOTP({
+      const data: any = await getOTP({
         type: isLogin ? "login" : "register",
         formData: urlencoded,
       });
-
+      
       if (data.error) {
-        toast.error("Something went wrong!");
+        toast.error(data.error?.data?.error || "Something went wrong!");
       } else {
         if (!isLogin) {
           if (data.data.data.otp) {

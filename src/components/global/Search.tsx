@@ -6,7 +6,7 @@ import {
 } from "@/store/services/category";
 import Drip from "@/assets/img/drip.svg";
 import AutoComplete from "./AutoComplete";
-import { truncateString } from "@/utils/helpers";
+import { getCategoryLink, getSlug, truncateString } from "@/utils/helpers";
 import ChevronDownIcon from "@/assets/icons/ChevronDownIcon";
 import { useOnClickOutside } from "@/hooks/useOnClickOutside";
 
@@ -14,6 +14,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { LuLoader2 } from "react-icons/lu";
 import { useEffect, useRef, useState } from "react";
+import { useRouter } from "next/router";
 
 type ITEM = {
   id: string;
@@ -31,6 +32,7 @@ const Search = () => {
   const [subCategories, setSubCategories] = useState<SERVICE_LIST[] | null>(
     null
   );
+  const router=useRouter()
   const { data } = useFetchCategoriesQuery(undefined, { skip: !showMenu, refetchOnMountOrArgChange: true });
   useOnClickOutside(menuRef, () => {
     setShowMenu(false);
@@ -76,6 +78,17 @@ const Search = () => {
     }
   }, [subCategories]);
 
+  const handleCategoryClick = (id: string) => {
+    setShowMenu(false)
+    router.push(getCategoryLink(list?.find(item=>item.id===String(id))?.name!))
+  }
+
+  const getNavLink = (service_name: string) => {
+    if (service_name) {
+      return `/${getSlug(list?.find(item=>item.id===String(category))?.name!) || ''}/${getSlug(subCategories?.[parseInt(selectedSub)-2]?.name || '')}/${getSlug(service_name)}`
+    }
+  }
+
   return (
     <>
       <div className="w-full h-10 hidden sm:flex bg-[#C9C9C9]/40 border border-white dark:border-primary">
@@ -117,6 +130,7 @@ const Search = () => {
                 {list?.map((option: ITEM, idx) => (
                   <div
                     key={idx}
+                    onClick={() => handleCategoryClick(option.id)}
                     onMouseEnter={() => setCategory(parseInt(option.id))}
                     className={`w-full flex items-center justify-center p-3 hover:text-white hover:bg-accent cursor-pointer ${
                       category === parseInt(option.id)
@@ -174,7 +188,7 @@ const Search = () => {
                         <Link
                           key={service.service_id}
                           onClick={() => setShowMenu(false)}
-                          href={`/drips/${service.service_id}`}
+                          href={getNavLink(service.name || '') || `/drips/${service.service_id}`}
                           className="flex items-center justify-center space-x-2.5 p-3.5 hover:bg-accent"
                         >
                           <div className="size-14 flex items-center justify-center p-2 bg-light-primary dark:bg-highlight">
@@ -203,7 +217,7 @@ const Search = () => {
                   <div className="sticky bottom-0 left-0 w-full flex items-center justify-end pr-3 pb-3">
                     <Link
                       onClick={() => setShowMenu(false)}
-                      href="/drips"
+                      href={getCategoryLink(list?.find(item=>item.id===String(category))?.name!)}
                       className="px-6 py-2 bg-accent text-white text-xs text-center"
                     >
                       View All

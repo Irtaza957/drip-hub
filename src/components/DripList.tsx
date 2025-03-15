@@ -2,7 +2,7 @@ import "swiper/css";
 import "swiper/css/grid";
 import DripCard from "./DripCard";
 import ListTitle from "./global/ListTitle";
-import { formatString } from "@/utils/helpers";
+import { formatString, getSlug } from "@/utils/helpers";
 import ChevronRightIcon from "@/assets/icons/ChevronRightIcon";
 
 import { useState } from "react";
@@ -24,6 +24,10 @@ const DripList = ({
   data: DRIP_CARD[];
 }) => {
   const [startSlide, setStartSlide] = useState(true);
+
+  const getNavLink = (name: string, category_name: string='') => {
+    return `/${getSlug(title)}/${getSlug(category_name)}/${getSlug(name)}`;
+  };
 
   return (
     <div className="w-full md:w-[90%] lg:max-w-[1440px] mx-auto flex flex-col items-center justify-center space-y-5">
@@ -56,7 +60,7 @@ const DripList = ({
                   : ""
               }`}
             >
-              <DripCard item={item} tag={tag} bundle={bundle} />
+              <DripCard item={item} tag={tag} bundle={bundle} navLink={getNavLink(item.name || '', item?.category_name)} />
             </SwiperSlide>
           ))}
         </Swiper>
@@ -103,7 +107,7 @@ const DripList = ({
                 startSlide && (idx === 0 || idx === 2) ? "pl-5" : ""
               }`}
             >
-              <DripCard item={item} tag={tag} bundle={bundle} />
+              <DripCard item={item} tag={tag} bundle={bundle} navLink={getNavLink(item.name || '', item?.category_name)} />
             </SwiperSlide>
           ))}
         </Swiper>
@@ -145,17 +149,17 @@ const DripList = ({
         >
           {data.map((item) => (
             <SwiperSlide key={item.category_id}>
-              <DripCard item={item} tag={tag} bundle={bundle} />
+              <DripCard item={item} tag={tag} bundle={bundle} navLink={getNavLink(item.name || '', item?.category_name)} />
             </SwiperSlide>
           ))}
           {data.map((item) => (
             <SwiperSlide key={item.category_id}>
-              <DripCard item={item} tag={tag} bundle={bundle} />
+              <DripCard item={item} tag={tag} bundle={bundle} navLink={getNavLink(item.name || '', item?.category_name)} />
             </SwiperSlide>
           ))}
           {data.map((item) => (
             <SwiperSlide key={item.category_id}>
-              <DripCard item={item} tag={tag} bundle={bundle} />
+              <DripCard item={item} tag={tag} bundle={bundle} navLink={getNavLink(item.name || '', item?.category_name)} />
             </SwiperSlide>
           ))}
         </Swiper>
@@ -197,17 +201,17 @@ const DripList = ({
         >
           {data.map((item) => (
             <SwiperSlide key={item.category_id}>
-              <DripCard item={item} tag={tag} bundle={bundle} />
+              <DripCard item={item} tag={tag} bundle={bundle} navLink={getNavLink(item.name || '', item?.category_name)} />
             </SwiperSlide>
           ))}
           {data.map((item) => (
             <SwiperSlide key={item.category_id}>
-              <DripCard item={item} tag={tag} bundle={bundle} />
+              <DripCard item={item} tag={tag} bundle={bundle} navLink={getNavLink(item.name || '', item?.category_name)} />
             </SwiperSlide>
           ))}
           {data.map((item) => (
             <SwiperSlide key={item.category_id}>
-              <DripCard item={item} tag={tag} bundle={bundle} />
+              <DripCard item={item} tag={tag} bundle={bundle} navLink={getNavLink(item.name || '', item?.category_name)} />
             </SwiperSlide>
           ))}
         </Swiper>

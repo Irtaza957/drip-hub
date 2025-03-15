@@ -1,5 +1,4 @@
 import dayjs from "dayjs";
-import toast from "react-hot-toast";
 import { Libraries } from "@react-google-maps/api";
 
 export const libraries: Libraries = ["places"];
@@ -17,10 +16,22 @@ type CountryResponse = {
   };
 };
 
+export const calculateWithoutVAT = (cart: CART[]) => {
+  return cart?.reduce(
+    (acc, item) => acc + ((item.price_without_vat || 0) * item.quantity || 0),
+    0
+  );
+};
+export const calculateDiscountValue = (cart: CART[]) =>
+  cart?.reduce((acc, item) => acc + (item.discount || 0), 0);
+
+export const calculateVAT = (cart: CART[]) =>
+  (calculateWithoutVAT(cart) - calculateDiscountValue(cart)) * (5 / 100);
+
 export const calculateTotalCost = (cart: CART[]) => {
   let totalCost = 0;
   for (const item of cart) {
-    totalCost += (item.price_with_vat || item.price) * item.quantity;
+    totalCost += (item.price || (item?.price_without_vat || 0)) * item.quantity;
   }
   return totalCost;
 };
@@ -136,11 +147,7 @@ export const fetchCountryFromIP = async (setter: (code: string) => void) => {
 
     if (countryCode) {
       setter(countryCode);
-    } else {
-      toast.error("Error Fetching Location");
-    }
-  } else {
-    toast.error("Error Fetching Location");
+    } 
   }
 };
 
@@ -296,3 +303,11 @@ export function formatString(input: string): string {
     .replace(/\s+/g, "-")
     .trim();
 }
+
+export const getCategoryLink = (category_name: string) => {
+  return `/${category_name?.toLowerCase()?.replace(/\s+/g, "-")}`
+};
+
+export const getSlug = (value: string) => {
+  return value?.toLowerCase().replace(/[^a-z0-9\s]/g, "").replace(/\s+/g, "-");
+};

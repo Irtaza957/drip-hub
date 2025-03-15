@@ -9,7 +9,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { useEffect, useRef, useState } from "react";
 
 import "swiper/css";
-import { imageBase } from "@/utils/helpers";
+import { getCategoryLink, imageBase } from "@/utils/helpers";
 import { setSelectedCategory } from "@/store/global";
 import PurpleDrip from "@/assets/img/drips/purple-drip.svg";
 import { useFetchCategoriesQuery } from "@/store/services/category";
@@ -98,7 +98,7 @@ const Categories = () => {
                   className={`${startSlide && idx === 0 ? "ml-5" : ""}`}
                 >
                   <Link
-                    href="/drips"
+                    href={getCategoryLink(category?.category_name)}
                     onClick={() => selectCategory(category)}
                     className="w-full h-12 bg-light-primary dark:bg-secondary text-light-text dark:text-white flex items-center justify-center cursor-pointer gap-3 py-2 px-4"
                   >
@@ -127,7 +127,7 @@ const Categories = () => {
               {data?.map((category, idx) => (
                 <SwiperSlide key={idx}>
                   <Link
-                    href="/drips"
+                    href={getCategoryLink(category?.category_name)}
                     onClick={() => selectCategory(category)}
                     className="w-full h-[44px] flex items-center justify-center cursor-pointer gap-4 pr-3 pl-4 bg-light-primary dark:bg-secondary text-light-text dark:text-white"
                   >
@@ -156,7 +156,7 @@ const Categories = () => {
               {data?.map((category, idx) => (
                 <SwiperSlide key={idx}>
                   <Link
-                    href="/drips"
+                    href={getCategoryLink(category?.category_name)}
                     onClick={() => selectCategory(category)}
                     className="w-full h-[44px] flex items-center justify-center cursor-pointer gap-4 pr-3 pl-4 bg-light-primary dark:bg-secondary text-light-text dark:text-white"
                   >
@@ -185,7 +185,7 @@ const Categories = () => {
               {data?.map((category, idx) => (
                 <SwiperSlide key={idx}>
                   <Link
-                    href="/drips"
+                    href={getCategoryLink(category?.category_name)}
                     onClick={() => selectCategory(category)}
                     className="w-full h-[52px] bg-light-primary dark:bg-secondary text-light-text dark:text-white flex items-center justify-center cursor-pointer gap-4 pr-3 lg:pr-5 xl:pl-6 xl:pr-16 pl-4"
                   >
@@ -215,7 +215,7 @@ const Categories = () => {
             ? [...Array(4)].map((_, idx) => <CategorySkeletion key={idx} />)
             : data?.map((category) => (
                 <Link
-                  href="/drips"
+                  href={getCategoryLink(category?.category_name)}
                   key={category.category_id}
                   onClick={() => selectCategory(category)}
                   className="w-full h-full flex items-center justify-center bg-white dark:bg-highlight/60 text-light-text dark:text-white p-4 group hover:border hover:scale-105 border-accent/50 transition-all ease-linear duration-150 shadow-sm shadow-blue-200 dark:shadow-none"
@@ -244,7 +244,7 @@ const Categories = () => {
             ? [...Array(4)].map((_, idx) => <CategorySkeletion key={idx} />)
             : data?.map((category) => (
                 <Link
-                  href="/drips"
+                  href={getCategoryLink(category?.category_name)}
                   key={category.category_id}
                   onClick={() => selectCategory(category)}
                   className="col-span-1 w-full h-full flex items-center justify-center bg-white dark:bg-highlight/50 text-light-text dark:text-white p-3 shadow-sm shadow-blue-200 dark:shadow-none"

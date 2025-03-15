@@ -14,7 +14,7 @@ import ClockIcon from "@/assets/icons/ClockIcon";
 import DropletIcon from "@/assets/icons/DropletIcon";
 import CartTwoIcon from "@/assets/icons/CartTwoIcon";
 import { useAddToWishlistMutation } from "@/store/services/wishlist";
-import { addToCart, removeFromCart, toggleSidebar } from "@/store/global";
+import { addToCart, removeFromCart, setCart, toggleSidebar } from "@/store/global";
 
 const WishlistCard = ({ item }: { item: WISHLIST }) => {
   const dispatch = useDispatch();
@@ -35,20 +35,28 @@ const WishlistCard = ({ item }: { item: WISHLIST }) => {
     dispatch(toggleSidebar());
   };
 
-  const add = (id: number, name: string, price: number, discount: number) => {
+  const add = (id: number, name: string, price: number, discount: number, price_without_vat: number, isQuantity: boolean = false) => {
     dispatch(
       addToCart({
         id,
         name,
         price,
         discount,
-        quantity: 1,
+        quantity: isQuantity ? quantity + 1 : 1,
+        price_without_vat
       })
     );
   };
 
-  const remove = (id: number) => {
-    dispatch(removeFromCart(id));
+  const remove = (item: WISHLIST) => {
+    if (item) {
+      if (Number(quantity) === 1) {
+        dispatch(removeFromCart(Number(item.service_id)));
+      } else {
+        const updatedCart = cart.map(i => i.id === Number(item.service_id) ? { ...i, quantity: i.quantity - 1 } : i);
+        dispatch(setCart(updatedCart));
+      }
+    }
   };
 
   const like = async (id: string) => {
@@ -178,7 +186,8 @@ const WishlistCard = ({ item }: { item: WISHLIST }) => {
                       parseInt(item.service_id!),
                       item.service_name!,
                       parseInt(item.price),
-                      0
+                      0,
+                      parseInt(item.price_without_vat)
                     );
                     handleSidebar();
                   }}
@@ -194,7 +203,8 @@ const WishlistCard = ({ item }: { item: WISHLIST }) => {
                       parseInt(item.service_id!),
                       item.service_name!,
                       parseInt(item.price),
-                      0
+                      0,
+                      parseInt(item.price_without_vat)
                     );
                   }}
                   className="w-28 sm:w-32 border py-1.5 sm:hidden flex border-accent text-xs font-semibold items-center justify-center"
@@ -207,7 +217,7 @@ const WishlistCard = ({ item }: { item: WISHLIST }) => {
                 <button
                   type="button"
                   onClick={() => {
-                    remove(parseInt(item.service_id!));
+                    remove(item);
                     handleDecrement();
                   }}
                   className="border h-full p-1.5 border-accent text-xs font-semibold"
@@ -223,7 +233,8 @@ const WishlistCard = ({ item }: { item: WISHLIST }) => {
                       parseInt(item.service_id!),
                       item.service_name!,
                       parseInt(item.price),
-                      0
+                      0,
+                      parseInt(item.price_without_vat)
                     );
                   }}
                   className="border p-1.5 border-accent bg-accent text-white text-xs font-semibold"
@@ -311,7 +322,8 @@ const WishlistCard = ({ item }: { item: WISHLIST }) => {
                       parseInt(item.service_id!),
                       item.service_name!,
                       parseInt(item.price),
-                      0
+                      0,
+                      parseInt(item.price_without_vat)
                     );
                   }}
                   className="w-28 md:w-32 border py-1.5 border-accent text-xs font-semibold hidden sm:flex items-center justify-center"
@@ -326,7 +338,8 @@ const WishlistCard = ({ item }: { item: WISHLIST }) => {
                       parseInt(item.service_id!),
                       item.service_name!,
                       parseInt(item.price),
-                      0
+                      0,
+                      parseInt(item.price_without_vat)
                     );
                   }}
                   className="w-28 md:w-32 border py-1.5 border-accent text-xs font-semibold flex sm:hidden items-center justify-center"
@@ -339,7 +352,7 @@ const WishlistCard = ({ item }: { item: WISHLIST }) => {
                 <button
                   type="button"
                   onClick={() => {
-                    remove(parseInt(item.service_id!));
+                    remove(item);
                     handleDecrement();
                   }}
                   className="border h-full p-1.5 border-accent text-xs font-semibold"
@@ -355,7 +368,8 @@ const WishlistCard = ({ item }: { item: WISHLIST }) => {
                       parseInt(item.service_id!),
                       item.service_name!,
                       parseInt(item.price),
-                      0
+                      0,
+                      parseInt(item.price_without_vat)
                     );
                   }}
                   className="border p-1.5 border-accent bg-accent text-white text-xs font-semibold"

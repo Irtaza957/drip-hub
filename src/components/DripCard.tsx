@@ -17,16 +17,18 @@ import DropletIcon from "@/assets/icons/DropletIcon";
 import CartTwoIcon from "@/assets/icons/CartTwoIcon";
 import BundleDrips from "@/assets/img/header-drips.svg";
 import { useAddToWishlistMutation } from "@/store/services/wishlist";
-import { addToCart, removeFromCart, toggleSidebar } from "@/store/global";
+import { addToCart, removeFromCart, setCart, toggleSidebar } from "@/store/global";
 
 const DripCard = ({
   tag,
   item,
   bundle,
+  navLink
 }: {
   tag?: string;
   item: DRIP_CARD;
   bundle?: boolean;
+  navLink?: string 
 }) => {
   const dispatch = useDispatch();
   const [quantity, setQuantity] = useState(0);
@@ -47,20 +49,28 @@ const DripCard = ({
     dispatch(toggleSidebar());
   };
 
-  const add = (id: number, name: string, price: number, discount: number) => {
+  const add = (id: number, name: string, price: number, discount: number, price_without_vat: number, isQuantity: boolean = false) => {
     dispatch(
       addToCart({
         id,
         name,
         price,
         discount,
-        quantity: 1,
+        quantity: isQuantity ? quantity + 1 : 1,
+        price_without_vat,
       })
     );
   };
 
-  const remove = (id: number) => {
-    dispatch(removeFromCart(id));
+  const remove = (item: DRIP_CARD) => {
+    if (item) {
+      if (Number(quantity) === 1) {
+        dispatch(removeFromCart(Number(item.service_id)));
+      } else {
+        const updatedCart = cart.map(i => i.id === Number(item.service_id) ? { ...i, quantity: i.quantity - 1 } : i);
+        dispatch(setCart(updatedCart));
+      }
+    }
   };
 
   const like = async (id: string) => {
@@ -116,7 +126,7 @@ const DripCard = ({
       <div className="grid grid-cols-6 bg-white dark:bg-primary border border-light-primary dark:border-border p-1.5">
         {tag === "choice" ? (
           <Link
-            href={`/drips/${item.service_id}`}
+            href={navLink || `/drips/${item.service_id}`}
             className="relative col-span-2 p-2.5 w-full flex items-center justify-center bg-light-primary dark:bg-secondary"
           >
             <Image priority alt="card" width={42} height={84} src={DripImage} />
@@ -131,7 +141,7 @@ const DripCard = ({
           </Link>
         ) : tag === "best" ? (
           <Link
-            href={`/drips/${item.service_id}`}
+            href={navLink || `/drips/${item.service_id}`}
             className="relative col-span-2 p-2.5 w-full flex flex-col items-center justify-center bg-light-primary dark:bg-tertiary"
           >
             <Image priority alt="card" width={42} height={84} src={DripImage} />
@@ -141,7 +151,7 @@ const DripCard = ({
           </Link>
         ) : (
           <Link
-            href={`/drips/${item.service_id}`}
+            href={navLink || `/drips/${item.service_id}`}
             className="col-span-2 p-2.5 w-full flex items-center justify-center bg-light-primary dark:bg-tertiary"
           >
             <Image
@@ -159,7 +169,7 @@ const DripCard = ({
             <div className="w-full flex flex-col items-center justify-center px-1.5 py-1">
               <div className="w-full flex items-end justify-center">
                 <Link
-                  href={`/drips/${item.service_id}`}
+                  href={navLink || `/drips/${item.service_id}`}
                   className="flex-1 text-[16px] sm:text-[22px] text-left font-normal"
                 >
                   {item.name}
@@ -187,7 +197,7 @@ const DripCard = ({
                 </div>
               </div>
               <Link
-                href={`/drips/${item.service_id}`}
+                href={navLink || `/drips/${item.service_id}`}
                 className="w-[90%] mr-auto text-left text-xs font-extralight sm:font-light line-clamp-1 sm:line-clamp-2"
               >
                 {item.description}
@@ -195,7 +205,7 @@ const DripCard = ({
             </div>
           </div>
           <Link
-            href={`/drips/${item.service_id}`}
+            href={navLink || `/drips/${item.service_id}`}
             className="w-full flex items-center justify-start gap-7 my-1"
           >
             <div className="flex items-center justify-start space-x-1.5">
@@ -225,7 +235,8 @@ const DripCard = ({
                       parseInt(item.service_id!),
                       item.name!,
                       parseInt(item.price_with_vat),
-                      parseInt(item.discount_value!)
+                      parseInt(item.discount_value!),
+                      parseInt(item.price_without_vat),
                     );
                     handleSidebar();
                   }}
@@ -241,7 +252,8 @@ const DripCard = ({
                       parseInt(item.service_id!),
                       item.name!,
                       parseInt(item.price_with_vat),
-                      parseInt(item.discount_value!)
+                      parseInt(item.discount_value!),
+                      parseInt(item.price_without_vat),
                     );
                   }}
                   className="w-28 sm:w-32 border py-1.5 sm:hidden flex border-accent text-xs font-semibold items-center justify-center"
@@ -254,7 +266,7 @@ const DripCard = ({
                 <button
                   type="button"
                   onClick={() => {
-                    remove(parseInt(item.service_id!));
+                    remove(item);
                     handleDecrement();
                   }}
                   className="border h-full p-1.5 border-accent text-xs font-semibold"
@@ -270,7 +282,8 @@ const DripCard = ({
                       parseInt(item.service_id!),
                       item.name!,
                       parseInt(item.price_with_vat),
-                      parseInt(item.discount_value!)
+                      parseInt(item.discount_value!),
+                      parseInt(item.price_without_vat),
                     );
                   }}
                   className="border p-1.5 border-accent bg-accent text-white text-xs font-semibold"

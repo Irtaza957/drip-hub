@@ -3,9 +3,9 @@ import XIcon from "@/assets/icons/XIcon";
 import Drip from "@/assets/img/drip.svg";
 import AuthModal from "../modals/AuthModal";
 import EmptyCart from "@/assets/img/empty-cart.svg";
-import { calculateTotalCost } from "@/utils/helpers";
+import { calculateDiscountValue, calculateVAT, calculateWithoutVAT } from "@/utils/helpers";
 import { useOnClickOutside } from "@/hooks/useOnClickOutside";
-import { addToCart, toggleSidebar, removeFromCart } from "@/store/global";
+import { addToCart, toggleSidebar, removeFromCart, setCart } from "@/store/global";
 
 import Link from "next/link";
 import Image from "next/image";
@@ -20,25 +20,30 @@ const Sidebar = () => {
   const { cart, sidebarToggle } = useSelector(
     (state: RootState) => state.global
   );
-  const [selectedItem, setSelectedItem] = useState<CART | null>(null);
 
-  const add = () => {
-    if (selectedItem) {
+  const add = (item: CART) => {
+    if (item) {
       dispatch(
         addToCart({
-          id: selectedItem?.id,
-          name: selectedItem?.name,
-          price: selectedItem?.price,
-          discount: selectedItem?.discount,
-          quantity: 1,
+          id: item?.id,
+          name: item?.name,
+          price: item?.price,
+          discount: item?.discount,
+          quantity: item?.quantity + 1,
+          price_without_vat: item?.price,
         })
       );
     }
   };
 
-  const remove = () => {
-    if (selectedItem) {
-      dispatch(removeFromCart(selectedItem?.id));
+  const remove = (item: CART) => {
+    if (item) {
+      if (item.quantity === 1) {
+        dispatch(removeFromCart(item.id));
+      } else {
+        const updatedCart = cart.map(i => i.id === item.id ? { ...i, quantity: i.quantity - 1 } : i);
+        dispatch(setCart(updatedCart));
+      }
     }
   };
 
@@ -113,15 +118,14 @@ const Sidebar = () => {
                     Qty: {item.quantity}
                   </span>
                   <span className="w-full text-left text-xs  font-medium">
-                    AED {item.price}
+                    AED {item.price_without_vat}
                   </span>
                 </div>
                 <div className="w-3/12 h-full flex items-center justify-end space-x-2.5 cursor-pointer">
                   <button
                     type="button"
                     onClick={() => {
-                      setSelectedItem(item);
-                      remove();
+                      remove(item);
                     }}
                     className="border border-accent p-0.5 w-6 h-6 flex items-center justify-center"
                   >
@@ -131,8 +135,7 @@ const Sidebar = () => {
                   <button
                     type="button"
                     onClick={() => {
-                      setSelectedItem(item);
-                      add();
+                      add(item);
                     }}
                     className="bg-accent text-white p-0.5 w-6 h-6 flex items-center justify-center"
                   >
@@ -146,35 +149,25 @@ const Sidebar = () => {
         {cart.length > 0 && (
           <div className="w-full flex flex-col items-center justify-center pb-[85px] px-5 space-y-1">
             <div className="w-full text-sm flex items-center justify-between font-medium">
-              <span>Price Without VAT</span>
-              <span>
-                AED&nbsp;
-                {cart.reduce((acc: number, item: CART) => acc + (Number(item.price) || 0), 0)}
-              </span>
-            </div>
-            <div className="w-full text-sm flex items-center justify-between font-medium">
-              <span>Price With VAT</span>
-              <span>
-                AED&nbsp;
-                {cart.reduce((acc: number, item: CART) => acc + (Number(item.price_with_vat) || 0), 0)}
-              </span>
-            </div>
-            <div className="w-full text-sm flex items-center justify-between font-medium">
               <span>Sub Total</span>
               <span>
                 AED&nbsp;
-                {new Intl.NumberFormat().format(calculateTotalCost(cart))}
+                {calculateWithoutVAT(cart)}
               </span>
             </div>
             <div className="w-full text-sm flex items-center justify-between font-medium">
               <span>Discount</span>
-              <span>AED {cart.reduce((acc: number, item: CART) => acc + (item.discount || 0), 0)?.toFixed(2)}</span>
+              <span>AED {calculateDiscountValue(cart)}</span>
+            </div>
+            <div className="w-full text-sm flex items-center justify-between font-medium">
+              <span>VAT</span>
+              <span>AED {Math.round(Number(calculateVAT(cart)))}</span>
             </div>
             <div className="w-full text-sm flex items-center justify-between font-bold">
               <span>Grand Total</span>
               <span>
                 AED&nbsp;
-                {new Intl.NumberFormat().format(calculateTotalCost(cart))}
+                {Math.round(calculateVAT(cart) + (calculateWithoutVAT(cart) - calculateDiscountValue(cart)))}
               </span>
             </div>
           </div>

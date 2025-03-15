@@ -13,7 +13,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import DripCard from "@/components/DripCard";
 import { GetServerSidePropsContext } from "next";
-import { imageBase, sort } from "@/utils/helpers";
+import { getCategoryLink, getSlug, imageBase, sort } from "@/utils/helpers";
 import DripCardTwo from "@/components/DripCardTwo";
 import { setSelectedCategory } from "@/store/global";
 import { useFetchCategoriesQuery } from "@/store/services/category";
@@ -45,6 +45,13 @@ const SectionListing = ({ data }: { data: DRIP }) => {
     dispatch(setSelectedCategory(value));
   };
 
+  const getNavLink = (name: string) => {
+    return `/${data.section
+      .toLowerCase()
+      .split(" ")
+      .join("-")}/${getSlug(name)}`;
+  };
+
   return (
     <div className="w-full bg-light-primary dark:bg-secondary text-light-text dark:text-white">
       <div className="fixed flex w-full shadow-md z-50 top-[61px] sm:top-[81px] left-0 bg-white dark:bg-primary">
@@ -69,7 +76,7 @@ const SectionListing = ({ data }: { data: DRIP }) => {
                   className={`${startSlide && idx === 0 ? "ml-5" : ""}`}
                 >
                   <Link
-                    href="/drips"
+                    href={getCategoryLink(category?.category_name)}
                     onClick={() => selectCategory(category)}
                     className="w-full flex flex-col items-center justify-center cursor-pointer gap-1 p-2 bg-light-primary dark:bg-secondary text-light-text dark:text-white"
                   >
@@ -108,7 +115,7 @@ const SectionListing = ({ data }: { data: DRIP }) => {
                   className={`${startSlide && idx === 0 ? "ml-5" : ""}`}
                 >
                   <Link
-                    href="/drips"
+                    href={getCategoryLink(category?.category_name)}
                     onClick={() => selectCategory(category)}
                     className="w-full h-[44px] flex items-center justify-center cursor-pointer gap-4 pr-3 pl-4 bg-light-primary dark:bg-secondary text-light-text dark:text-white"
                   >
@@ -137,7 +144,7 @@ const SectionListing = ({ data }: { data: DRIP }) => {
               {categories?.map((category, idx) => (
                 <SwiperSlide key={idx}>
                   <Link
-                    href="/drips"
+                    href={getCategoryLink(category?.category_name)}
                     onClick={() => selectCategory(category)}
                     className="w-full h-[44px] flex items-center justify-center cursor-pointer gap-4 pr-3 pl-4 bg-light-primary dark:bg-secondary text-light-text dark:text-white"
                   >
@@ -166,7 +173,7 @@ const SectionListing = ({ data }: { data: DRIP }) => {
               {categories?.map((category, idx) => (
                 <SwiperSlide key={idx}>
                   <Link
-                    href="/drips"
+                    href={getCategoryLink(category?.category_name)}
                     onClick={() => selectCategory(category)}
                     className="w-full h-[52px] bg-light-primary dark:bg-secondary text-light-text dark:text-white flex items-center justify-center cursor-pointer gap-4 pr-3 lg:pr-5 xl:pl-6 xl:pr-16 pl-4"
                   >
@@ -310,18 +317,18 @@ const SectionListing = ({ data }: { data: DRIP }) => {
             {limit === "All"
               ? sort(sorting, data?.section_data)?.map((service, idx) => {
                   if (!viewType) {
-                    return <DripCard key={idx} item={service} />;
+                    return <DripCard key={idx} item={service} navLink={getNavLink(service.name || '')} />;
                   } else {
-                    return <DripCardTwo key={idx} item={service} />;
+                    return <DripCardTwo key={idx} item={service} navLink={getNavLink(service.name || '')} />;
                   }
                 })
               : data?.section_data
                   .slice(0, parseInt(limit))
                   .map((service, idx) => {
                     if (!viewType) {
-                      return <DripCard key={idx} item={service} />;
+                      return <DripCard key={idx} item={service} navLink={getNavLink(service.name || '')} />;
                     } else {
-                      return <DripCardTwo key={idx} item={service} />;
+                      return <DripCardTwo key={idx} item={service} navLink={getNavLink(service.name || '')} />;
                     }
                   })}
           </div>

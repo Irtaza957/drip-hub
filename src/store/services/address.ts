@@ -11,7 +11,7 @@ export const addressApi = api.injectEndpoints({
       invalidatesTags: ["Addresses"],
     }),
     fetchAddresses: build.query({
-      query: (id) => ({
+      query: ({id}) => ({
         url: `/address?customer_id=${id}`,
         method: "GET",
       }),

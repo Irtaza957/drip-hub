@@ -11,7 +11,7 @@ import XIcon from "@/assets/icons/XIcon";
 import AuthModal from "./modals/AuthModal";
 import { calculateTotalCost } from "@/utils/helpers";
 import ArrowRightIcon from "@/assets/icons/ArrowRightIcon";
-import { addToCart, discardFromCart, removeFromCart } from "@/store/global";
+import { addToCart, discardFromCart, removeFromCart, setCart } from "@/store/global";
 
 const CheckoutBar = () => {
   const { push } = useRouter();
@@ -19,7 +19,6 @@ const CheckoutBar = () => {
   const pathname = usePathname();
   const [openCart, setOpenCart] = useState(false);
   const [openLogin, setOpenLogin] = useState(false);
-  const [selectedItem, setSelectedItem] = useState<CART | null>(null);
   const { user, cart } = useSelector((state: RootState) => state.global);
 
   const pathnames = ["/bookings", "/drips", "/account-settings", "/checkout"];
@@ -28,23 +27,29 @@ const CheckoutBar = () => {
     pathnames.includes(pathname) ||
     dynamicPatterns.some((pattern) => pattern.test(pathname));
 
-  const add = () => {
-    if (selectedItem) {
+  const add = (item: CART) => {
+    if (item) {
       dispatch(
         addToCart({
-          id: selectedItem?.id,
-          name: selectedItem?.name,
-          price: selectedItem?.price,
-          discount: selectedItem?.discount,
-          quantity: 1,
+          id: item?.id,
+          name: item?.name,
+          price: item?.price,
+          discount: item?.discount,
+          price_without_vat: item?.price_without_vat,
+          quantity: item?.quantity + 1,
         })
       );
     }
   };
 
-  const remove = () => {
-    if (selectedItem) {
-      dispatch(removeFromCart(selectedItem?.id));
+  const remove = (item: CART) => {
+    if (item) {
+      if (item.quantity === 1) {
+        dispatch(removeFromCart(item.id));
+      } else {
+        const updatedCart = cart.map(i => i.id === item.id ? { ...i, quantity: i.quantity - 1 } : i);
+        dispatch(setCart(updatedCart));
+      }
     }
   };
 
@@ -96,8 +101,7 @@ const CheckoutBar = () => {
                     <button
                       type="button"
                       onClick={() => {
-                        setSelectedItem(item);
-                        remove();
+                        remove(item);
                       }}
                       className="size-8 border-r border-accent p-2 text-light-text dark:text-white flex items-center justify-center"
                     >
@@ -109,8 +113,7 @@ const CheckoutBar = () => {
                     <button
                       type="button"
                       onClick={() => {
-                        setSelectedItem(item);
-                        add();
+                        add(item);
                       }}
                       className="size-8 border-l border-accent p-2 text-light-text dark:text-white flex items-center justify-center"
                     >

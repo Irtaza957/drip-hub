@@ -6,10 +6,13 @@ import {
 } from "@headlessui/react";
 import { Fragment } from "react";
 import { FaChevronDown } from "react-icons/fa6";
+import he from 'he'
 
 const Accordion = ({
+  children,
   section,
 }: {
+  children?: React.ReactNode;
   section: {
     name?: string;
     description?: string;
@@ -22,19 +25,17 @@ const Accordion = ({
       {({ open }) => (
         <>
           <DisclosureButton
-            className={`w-full flex items-center justify-center space-x-3 p-3 transition-all duration-300 ease-linear ${
-              open
+            className={`w-full flex items-center justify-center space-x-3 p-3 transition-all duration-300 ease-linear ${open
                 ? "rounded-t-lg bg-primary text-white"
                 : "rounded-lg bg-gray-100 text-gray-500"
-            }`}
+              }`}
           >
             <span className="w-full text-left font-medium text-sm overflow-hidden truncate">
               {section?.name ? section?.name : section?.question}
             </span>
             <FaChevronDown
-              className={`size-4 transition-all duration-150 ease-linear ${
-                open && "rotate-180"
-              }`}
+              className={`size-4 transition-all duration-150 ease-linear ${open && "rotate-180"
+                }`}
             />
           </DisclosureButton>
           <Transition
@@ -47,9 +48,9 @@ const Accordion = ({
             leaveTo="transform opacity-0 scale-95"
           >
             <DisclosurePanel className="w-full p-3 rounded-b-lg bg-gray-100 text-gray-400 flex flex-col items-center justify-center space-y-3">
-              <p className="text-xs md:text-sm text-gray-500">
-                {section?.description ? section?.description : section?.answer}
-              </p>
+              {children ? children : (
+                <p className="text-xs md:text-sm text-gray-500" dangerouslySetInnerHTML={{ __html: he.decode(section?.description ? section?.description : section?.answer ?? '') }} />
+              )}
             </DisclosurePanel>
           </Transition>
         </>

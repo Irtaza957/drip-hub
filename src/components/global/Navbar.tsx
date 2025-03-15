@@ -296,6 +296,24 @@ const Navbar = () => {
             <button type="button" onClick={() => setOpenSearch(true)}>
               <MagnifierIcon className="size-5 text-light-text dark:text-white" />
             </button>
+            <div
+                onClick={() => {
+                  if (user) {
+                    router.push("/wishlist");
+                  } else {
+                    setOpenLogin(true);
+                  }
+                }}
+                className="relative cursor-pointer"
+              >
+                <HeartIcon
+                  fillColor="transparent"
+                  className="size-6 text-light-text dark:text-white"
+                />
+                <div className="absolute -top-2 -right-2 size-4 flex items-center justify-center bg-accent rounded-full">
+                  <span className="text-xs text-white">{wishlistCount}</span>
+                </div>
+              </div>
             <Link href="/cart" type="button" className="relative">
               <CartTwoIcon className="size-5 text-light-text dark:text-white" />
               <div className="absolute -top-2 -right-2 size-4 flex items-center justify-center bg-accent rounded-full">

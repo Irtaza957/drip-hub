@@ -21,8 +21,8 @@ import { useFetchHomeDataQuery } from "@/store/services/home";
 import ChevronRightIcon from "@/assets/icons/ChevronRightIcon";
 import { useApplyPromoMutation } from "@/store/services/booking";
 import ArrowRightLongIcon from "@/assets/icons/ArrowRightLongIcon";
-import { calculateDiscount, calculateTotalCost } from "@/utils/helpers";
-import { addToCart, discardFromCart, removeFromCart, setPromo } from "@/store/global";
+import { calculateDiscount, calculateDiscountValue, calculateVAT, calculateWithoutVAT, getSlug } from "@/utils/helpers";
+import { addToCart, discardFromCart, removeFromCart, setCart, setPromo } from "@/store/global";
 
 const Cart = () => {
   const router = useRouter();
@@ -37,26 +37,31 @@ const Cart = () => {
   const [promoCode, setPromoCode] = useState("");
   const [startSlide, setStartSlide] = useState(true);
   const [applyPromo, { isLoading }] = useApplyPromoMutation();
-  const [selectedItem, setSelectedItem] = useState<CART | null>(null);
   const { user, cart, promo } = useSelector((state: RootState) => state.global);
 
-  const add = () => {
-    if (selectedItem) {
+  const add = (item: CART) => {
+    if (item) {
       dispatch(
         addToCart({
-          id: selectedItem?.id,
-          name: selectedItem?.name,
-          price: selectedItem?.price,
-          discount: selectedItem?.discount,
-          quantity: 1,
+          id: item?.id,
+          name: item?.name,
+          price: item?.price,
+          discount: item?.discount,
+          quantity: item?.quantity + 1,
+          price_without_vat: item?.price,
         })
       );
     }
   };
 
-  const remove = () => {
-    if (selectedItem) {
-      dispatch(removeFromCart(selectedItem?.id));
+  const remove = (item: CART) => {
+    if (item) {
+      if (item.quantity === 1) {
+        dispatch(removeFromCart(item.id));
+      } else {
+        const updatedCart = cart.map(i => i.id === item.id ? { ...i, quantity: i.quantity - 1 } : i);
+        dispatch(setCart(updatedCart));
+      }
     }
   };
 
@@ -87,6 +92,10 @@ const Cart = () => {
 
   const clearPromo = () => {
     dispatch(setPromo(null));
+  };
+
+   const getNavLink = (name: string, category_name: string='') => {
+    return `/related-services/${getSlug(category_name)}/${getSlug(name)}`;
   };
 
   useEffect(() => {
@@ -129,9 +138,8 @@ const Cart = () => {
               {cart.map((item: CART, idx: number) => (
                 <div
                   key={item.id}
-                  className={`w-full flex flex-col items-center justify-center gap-5 ${
-                    idx !== 0 && "pt-5"
-                  }`}
+                  className={`w-full flex flex-col items-center justify-center gap-5 ${idx !== 0 && "pt-5"
+                    }`}
                 >
                   <div className="w-full flex items-center justify-between">
                     <p className="w-full text-left text-xl">{item.name}</p>
@@ -144,8 +152,7 @@ const Cart = () => {
                       <button
                         type="button"
                         onClick={() => {
-                          setSelectedItem(item);
-                          remove();
+                          remove(item);
                         }}
                         className="text-xl px-2"
                       >
@@ -157,15 +164,14 @@ const Cart = () => {
                       <button
                         type="button"
                         onClick={() => {
-                          setSelectedItem(item);
-                          add();
+                          add(item);
                         }}
                         className="text-xl px-2"
                       >
                         <FaPlus className="w-4 h-4" />
                       </button>
                     </div>
-                    <p className="text-xl">AED {Math.round(item.price_with_vat || item.price)}</p>
+                    <p className="text-xl">AED {Math.round(item.price_without_vat || item.price)}</p>
                   </div>
                 </div>
               ))}
@@ -200,31 +206,19 @@ const Cart = () => {
               </div>
               <div className="w-full h-full flex flex-col items-start justify-start gap-2.5">
                 <div className="w-full flex items-center justify-between">
-                  <p>Price Without VAT</p>
-                  <p>
-                    AED&nbsp;
-                    {cart.reduce((acc: number, item: CART) => acc + (Number(item.price) || 0), 0)}
-                  </p>
-                </div>
-                <div className="w-full flex items-center justify-between">
-                  <p>Price With VAT</p>
-                  <p>
-                    AED&nbsp;
-                    {cart.reduce((acc: number, item: CART) => acc + (Number(item.price_with_vat) || 0), 0)}
-                  </p>
-                </div>
-                <div className="w-full flex items-center justify-between">
                   <p>Subtotal</p>
                   <p>
                     AED&nbsp;
-                    {prices.subtotal !== 0
-                      ? new Intl.NumberFormat().format(prices.subtotal)
-                      : calculateTotalCost(cart)}
+                    {calculateWithoutVAT(cart)}
                   </p>
                 </div>
                 <div className="w-full flex items-center justify-between pb-2.5 border-b border-accent/50">
                   <p>Discount</p>
-                  <p>AED&nbsp;{prices.discounted_amount}</p>
+                  <p>AED&nbsp;{calculateDiscountValue(cart)}</p>
+                </div>
+                <div className="w-full flex items-center justify-between pb-2.5 border-b border-accent/50">
+                  <p>VAT</p>
+                  <p>AED&nbsp;{Math.round(Number(calculateVAT(cart)))}</p>
                 </div>
                 <div className="w-full flex items-center justify-between pb-2.5 border-b border-accent/50 text-lg">
                   <p>Grand Total</p>
@@ -232,7 +226,7 @@ const Cart = () => {
                     AED&nbsp;
                     {prices.discounted_total !== 0
                       ? new Intl.NumberFormat().format(prices.discounted_total)
-                      : calculateTotalCost(cart)}
+                      : Math.round(calculateVAT(cart) + (calculateWithoutVAT(cart) - calculateDiscountValue(cart)))}
                   </p>
                 </div>
               </div>
@@ -325,7 +319,7 @@ const Cart = () => {
                   key={i}
                   className={startSlide && i === 0 ? "pl-5" : ""}
                 >
-                  <DripCardTwo item={drip} />
+                  <DripCardTwo item={drip} navLink={getNavLink(drip.name || '', drip?.category_name)}/>
                 </SwiperSlide>
               ))
             )}
@@ -361,7 +355,7 @@ const Cart = () => {
             {data?.map((drip, idx) =>
               drip.section_data.map((drip) => (
                 <SwiperSlide key={idx}>
-                  <DripCardTwo item={drip} />
+                  <DripCardTwo item={drip} navLink={getNavLink(drip.name || '', drip?.category_name)} />
                 </SwiperSlide>
               ))
             )}
@@ -397,7 +391,7 @@ const Cart = () => {
             {data?.map((drip, idx) =>
               drip.section_data.map((drip) => (
                 <SwiperSlide key={idx}>
-                  <DripCardTwo item={drip} />
+                  <DripCardTwo item={drip} navLink={getNavLink(drip.name || '', drip?.category_name)} />
                 </SwiperSlide>
               ))
             )}

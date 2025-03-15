@@ -5,6 +5,9 @@ import {
   generateTimeSlots,
   calculateTotalCost,
   convertToDateString,
+  calculateDiscountValue,
+  calculateVAT,
+  calculateWithoutVAT,
 } from "@/utils/helpers";
 import { RootState } from "@/store";
 import BellIcon from "@/assets/icons/BellIcon";
@@ -93,8 +96,8 @@ const Checkout = () => {
       method === "Online Payment"
         ? "pol"
         : method === "Cash on Delivery"
-        ? "cod"
-        : "cdd"
+          ? "cod"
+          : "cdd"
     );
     urlencoded.append("payment_status", "pending");
     urlencoded.append("sub_total", `${calculateTotalCost(cart)}`);
@@ -304,10 +307,9 @@ const Checkout = () => {
               <div className="w-full flex flex-col items-center justify-center">
                 <div
                   onClick={() => setMethod("Credit Card")}
-                  className={`w-full p-2.5 ${
-                    method === "Credit Card" &&
+                  className={`w-full p-2.5 ${method === "Credit Card" &&
                     "bg-light-primary dark:bg-secondary border border-accent/20"
-                  } flex items-center justify-center space-x-2.5 cursor-pointer`}
+                    } flex items-center justify-center space-x-2.5 cursor-pointer`}
                 >
                   <CardIcon className="size-5 text-accent" />
                   <div className="w-full flex items-center justify-between">
@@ -321,10 +323,9 @@ const Checkout = () => {
                 </div>
                 <div
                   onClick={() => setMethod("Cash on Delivery")}
-                  className={`w-full p-2.5 ${
-                    method === "Cash on Delivery" &&
+                  className={`w-full p-2.5 ${method === "Cash on Delivery" &&
                     "bg-light-primary dark:bg-secondary border border-accent/20"
-                  } flex items-center justify-center space-x-2.5 cursor-pointer`}
+                    } flex items-center justify-center space-x-2.5 cursor-pointer`}
                 >
                   <DollarCircleIcon
                     borderColor="transparent"
@@ -341,10 +342,9 @@ const Checkout = () => {
                 </div>
                 <div
                   onClick={() => setMethod("Card on Delivery")}
-                  className={`w-full p-2.5 ${
-                    method === "Card on Delivery" &&
+                  className={`w-full p-2.5 ${method === "Card on Delivery" &&
                     "bg-light-primary dark:bg-secondary border border-accent/20"
-                  } flex items-center justify-center space-x-2.5 cursor-pointer`}
+                    } flex items-center justify-center space-x-2.5 cursor-pointer`}
                 >
                   <CardIcon className="size-5 text-accent" />
                   <div className="w-full flex items-center justify-between">
@@ -360,31 +360,25 @@ const Checkout = () => {
             </div>
             <div className="w-full flex flex-col items-center justify-center gap-1.5">
               <div className="w-full flex items-center justify-between text-sm md:text-[18px]">
-                <p>Price Without VAT</p>
-                <p>
-                  AED {cart.reduce((acc: number, item: CART) => acc + (Number(item.price) || 0), 0)}
-                </p>
-              </div>
-              <div className="w-full flex items-center justify-between text-sm md:text-[18px]">
-                <p>Price With VAT</p>
-                <p>
-                  AED {cart.reduce((acc: number, item: CART) => acc + (Number(item.price_with_vat) || 0), 0)}
-                </p>
-              </div>
-              <div className="w-full flex items-center justify-between text-sm md:text-[18px]">
                 <p>Subtotal</p>
                 <p>
-                  AED {new Intl.NumberFormat().format(calculateTotalCost(cart))}
+                  AED {calculateWithoutVAT(cart)}
+                </p>
+              </div>
+              <div className="w-full flex items-center justify-between text-sm md:text-[18px]">
+                <p>Discount</p>
+                <p>
+                  AED {calculateDiscountValue(cart)}
                 </p>
               </div>
               <div className="w-full flex items-center justify-between text-sm md:text-[18px] pb-2.5">
                 <p>VAT</p>
-                <p>AED {cart.reduce((acc: number, item: CART) => acc + (item.discount || 0), 0).toFixed(2)}</p>
+                <p>AED {Math.round(Number(calculateVAT(cart)))}</p>
               </div>
               <div className="w-full flex items-center justify-between text-lg md:text-xl pt-2.5 border-t border-accent/50">
                 <p>Grand Total</p>
                 <p>
-                  AED {new Intl.NumberFormat().format(calculateTotalCost(cart))}
+                  AED {Math.round(calculateVAT(cart) + (calculateWithoutVAT(cart) - calculateDiscountValue(cart)))}
                 </p>
               </div>
             </div>

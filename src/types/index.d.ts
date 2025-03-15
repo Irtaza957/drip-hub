@@ -11,6 +11,7 @@ declare type CART = {
   discount?: number;
   quantity: number;
   price_with_vat?: number;
+  price_without_vat?: number;
 };
 
 declare type USER = {
@@ -295,6 +296,8 @@ declare type WISHLIST = {
   total_reviews: string;
   description: string;
   price: string;
+  price_without_vat: string;
+  quantity?: string
 };
 
 declare type LOADING_CONTEXT = {
