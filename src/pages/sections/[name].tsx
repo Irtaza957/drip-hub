@@ -1,22 +1,22 @@
 "use client";
 
-import Link from "next/link";
+// import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
 import { IoGrid } from "react-icons/io5";
 import { FaThList } from "react-icons/fa";
-import { useDispatch } from "react-redux";
+// import { useDispatch } from "react-redux";
 // @ts-ignore
-import { FreeMode } from "swiper/modules";
-import { Swiper, SwiperSlide } from "swiper/react";
+// import { FreeMode } from "swiper/modules";
+// import { Swiper, SwiperSlide } from "swiper/react";
 
 import "swiper/css";
 import DripCard from "@/components/DripCard";
 import { GetServerSidePropsContext } from "next";
-import { getCategoryLink, getSlug, imageBase, sort } from "@/utils/helpers";
+import { getSlug, sort } from "@/utils/helpers";
 import DripCardTwo from "@/components/DripCardTwo";
-import { setSelectedCategory } from "@/store/global";
-import { useFetchCategoriesQuery } from "@/store/services/category";
+// import { setSelectedCategory } from "@/store/global";
+// import { useFetchCategoriesQuery } from "@/store/services/category";
 
 const sortingOptions = [
   {
@@ -34,27 +34,27 @@ const sortingOptions = [
 ];
 
 const SectionListing = ({ data }: { data: DRIP }) => {
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
   const [limit, setLimit] = useState("All");
   const [viewType, setViewType] = useState(false);
-  const [startSlide, setStartSlide] = useState(true);
-  const { data: categories } = useFetchCategoriesQuery({});
+  // const [startSlide, setStartSlide] = useState(true);
+  // const { data: categories } = useFetchCategoriesQuery({});
   const [sorting, setSorting] = useState("Price (Low to High)");
 
-  const selectCategory = (value: CATEGORY) => {
-    dispatch(setSelectedCategory(value));
-  };
+  // const selectCategory = (value: CATEGORY) => {
+  //   dispatch(setSelectedCategory(value));
+  // };
 
-  const getNavLink = (name: string) => {
+  const getNavLink = (name: string, category_name: string='') => {
     return `/${data.section
       .toLowerCase()
       .split(" ")
-      .join("-")}/${getSlug(name)}`;
+      .join("-")}/${getSlug(category_name)}/${getSlug(name)}`;
   };
 
   return (
     <div className="w-full bg-light-primary dark:bg-secondary text-light-text dark:text-white">
-      <div className="fixed flex w-full shadow-md z-50 top-[61px] sm:top-[81px] left-0 bg-white dark:bg-primary">
+      {/* <div className="fixed flex w-full shadow-md z-50 top-[61px] sm:top-[81px] left-0 bg-white dark:bg-primary">
         <div className="w-full md:w-[90%] lg:max-w-[1440px] mx-auto">
           <div className="w-full block sm:hidden py-2.5">
             <Swiper
@@ -193,9 +193,9 @@ const SectionListing = ({ data }: { data: DRIP }) => {
             </Swiper>
           </div>
         </div>
-      </div>
+      </div> */}
       <div className="w-full px-5 lg:px-0 md:w-[90%] lg:max-w-[1440px] mx-auto pb-20 flex flex-col items-start justify-start gap-5">
-        <div className="w-full flex flex-col items-center gap-4 pt-[165.75px] sm:pt-[163.75px] md:pt-[196px] lg:pt-[205px]">
+        <div className="w-full flex flex-col items-center gap-4 pt-[90px] md:pt-[120px]">
           <Image
             width={1000}
             height={1000}
@@ -317,18 +317,18 @@ const SectionListing = ({ data }: { data: DRIP }) => {
             {limit === "All"
               ? sort(sorting, data?.section_data)?.map((service, idx) => {
                   if (!viewType) {
-                    return <DripCard key={idx} item={service} navLink={getNavLink(service.name || '')} />;
+                    return <DripCard key={idx} item={service} navLink={getNavLink(service.name || '', service?.category_name)} />;
                   } else {
-                    return <DripCardTwo key={idx} item={service} navLink={getNavLink(service.name || '')} />;
+                    return <DripCardTwo key={idx} item={service} navLink={getNavLink(service.name || '', service?.category_name)} />;
                   }
                 })
               : data?.section_data
                   .slice(0, parseInt(limit))
                   .map((service, idx) => {
                     if (!viewType) {
-                      return <DripCard key={idx} item={service} navLink={getNavLink(service.name || '')} />;
+                      return <DripCard key={idx} item={service} navLink={getNavLink(service.name || '', service?.category_name)} />;
                     } else {
-                      return <DripCardTwo key={idx} item={service} navLink={getNavLink(service.name || '')} />;
+                      return <DripCardTwo key={idx} item={service} navLink={getNavLink(service.name || '', service?.category_name)} />;
                     }
                   })}
           </div>

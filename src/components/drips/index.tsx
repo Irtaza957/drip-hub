@@ -176,7 +176,7 @@ const DripListing = () => {
 
   return (
     <div className="w-full bg-light-primary dark:bg-secondary">
-      <div className="fixed w-full z-20 top-[60px] sm:top-[80px] left-0 bg-white dark:bg-primary border-b border-light-primary dark:border-secondary">
+      {/* <div className="fixed w-full z-20 top-[60px] sm:top-[80px] left-0 bg-white dark:bg-primary border-b border-light-primary dark:border-secondary">
         <div className="w-full md:w-[90%] lg:max-w-[1440px] mx-auto">
           <div className="w-full block sm:hidden py-2.5 shadow-sm">
             <Swiper
@@ -439,8 +439,8 @@ const DripListing = () => {
             )}
           </div>
         </div>
-      </div>
-      <div className="relative w-full md:w-[90%] lg:max-w-[1440px] mx-auto hidden sm:flex mt-[140.75px] sm:mt-[144px] lg:mt-[152px] items-start justify-start">
+      </div> */}
+      <div className="relative w-full md:w-[90%] lg:max-w-[1440px] mx-auto hidden sm:flex mt-[80px] items-start justify-start">
         {isLoading ? (
           <div className="w-full flex items-center justify-center px-5 md:px-0 py-7">
             <div className="w-full grid grid-cols-2 md:grid-cols-3 gap-4">
@@ -473,7 +473,7 @@ const DripListing = () => {
           </div>
         ) : (
           <div className="relative w-full sm:h-[calc(100vh-144px)] lg:h-[calc(100vh-152px)] flex items-start justify-start gap-5 px-5 md:px-0">
-            <div className="mt-1.5 rounded-lg sticky sm:top-[144px] h-[90%] lg:top-[185px] left-0 w-[30%] md:w-[25%] max-h-full overflow-auto custom-scrollbar flex flex-col bg-white dark:bg-primary divide-y divide-light-primary dark:divide-primary">
+            <div className="mt-1.5 rounded-lg sticky sm:top-[90px] h-[90%] lg:top-[90px] left-0 w-[30%] md:w-[25%] max-h-full overflow-auto custom-scrollbar flex flex-col bg-white dark:bg-primary divide-y divide-light-primary dark:divide-primary">
               {subCategories?.map((sub, idx) => (
                 <div
                   key={idx}
@@ -670,7 +670,7 @@ const DripListing = () => {
           </div>
         )}
       </div>
-      <div className="w-full sm:hidden mt-[170.25px] mb-24 px-5 pt-1.5">
+      <div className="w-full sm:hidden mt-[65px] mb-24 px-5 pt-1.5">
         {subLoading ? (
           <div className="w-full xl:w-[85%] 3xl:w-[70%] xl:mx-auto grid grid-cols-1 xl:grid-cols-2 gap-4">
             <div className="col-span-1 xl:col-span-2 w-full">

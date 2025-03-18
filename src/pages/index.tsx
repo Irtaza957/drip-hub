@@ -6,7 +6,7 @@ import { useDispatch } from "react-redux";
 import Header from "@/components/Header";
 import { setCountry } from "@/store/global";
 import DripList from "@/components/DripList";
-import Categories from "@/components/Categories";
+// import Categories from "@/components/Categories";
 import { fetchCountryFromIP } from "@/utils/helpers";
 import ServiceSkeleton from "@/components/skeleton/Service";
 import { useFetchHomeDataQuery } from "@/store/services/home";
@@ -26,7 +26,7 @@ const Home = () => {
   return (
     <div className="w-full flex flex-col pb-10 xl:pb-20 items-center justify-center bg-light-primary dark:bg-secondary">
       <Header />
-      <Categories />
+      {/* <Categories /> */}
       <div className="w-full flex flex-col items-start justify-start mt-10 gap-14">
         {isLoading ? (
           <div className="w-full md:w-[90%] lg:max-w-[1440px] mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 px-5 md:px-0">
