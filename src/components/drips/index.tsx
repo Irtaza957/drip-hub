@@ -5,10 +5,9 @@ import Image from "next/image";
 import { IoGrid } from "react-icons/io5";
 import { FaThList } from "react-icons/fa";
 // @ts-ignore
-import { FreeMode } from "swiper/modules";
 import { useSelector } from "react-redux";
 import { useEffect, useRef, useState } from "react";
-import { Swiper, SwiperSlide, SwiperRef } from "swiper/react";
+import { SwiperRef } from "swiper/react";
 
 import "swiper/css";
 import {
@@ -46,14 +45,14 @@ const DripListing = () => {
   const [viewType, setViewType] = useState(false);
   const mobileSubCatRef = useRef<SwiperRef>(null);
   const desktopSubCatRef = useRef<SwiperRef>(null);
-  const [startSlide, setStartSlide] = useState(true);
+  // const [startSlide, setStartSlide] = useState(true);
   const [getSubCategories, { isLoading: subLoading }] =
     useFetchSubCategoriesMutation();
   const { selectedCategory: selected } = useSelector(
     (state: RootState) => state.global
   );
   const { data, isLoading } = useFetchCategoriesQuery({});
-  const [startSubSlide, setStartSubSlide] = useState(true);
+  // const [startSubSlide, setStartSubSlide] = useState(true);
   const [activeCategory, setActiveCategory] = useState("0");
   const [sorting, setSorting] = useState("Price (Low to High)");
   const [selectedCategory, setSelectedCategory] = useState<CATEGORY | null>(
@@ -66,18 +65,18 @@ const DripListing = () => {
   const pathname=usePathname()
   const router=useRouter()
 
-  const scrollToElement = (elementId: string) => {
-    const element = document.getElementById(elementId);
+  // const scrollToElement = (elementId: string) => {
+  //   const element = document.getElementById(elementId);
 
-    if (element) {
-      const elementRect = element.getBoundingClientRect();
-      const scrollTop = window.scrollY || document.documentElement.scrollTop;
-      const offset = elementRect.top + scrollTop;
-      const yOffset = offset - 300;
+  //   if (element) {
+  //     const elementRect = element.getBoundingClientRect();
+  //     const scrollTop = window.scrollY || document.documentElement.scrollTop;
+  //     const offset = elementRect.top + scrollTop;
+  //     const yOffset = offset - 300;
 
-      window.scrollTo({ top: yOffset, behavior: "smooth" });
-    }
-  };
+  //     window.scrollTo({ top: yOffset, behavior: "smooth" });
+  //   }
+  // };
 
   const getSubs = async () => {
     const response = await getSubCategories(selectedCategory?.category_id);
